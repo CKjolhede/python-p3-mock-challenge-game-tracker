@@ -1,15 +1,19 @@
 class Game:
+    
+    all = []
+    
     def __init__(self, title):
         self._title = title
+        Game.all.append(self)
         
     @property
     def title(self):
         return self._title
     
     @title.setter
-    def set_title(self, value):
-        if isinstance(value, str) and len(value) > 0 and not hasattr(self, "title"):
-            self._title = value
+    def title(self, title):
+        if isinstance(title, str) and len(title) > 0 and not hasattr(self, "title"):
+            self._title = title
         else:
             return ("no")
         
@@ -17,23 +21,29 @@ class Game:
         return [result for result in Result.all if result.game == self]
 
     def players(self):
-        return [result.player for result in self.results()]
+        players_set = {result.player for result in self.results()}
+        return list(players_set)
     
     def average_score(self, player):
-        pass
+        return sum(result.score for result in self.results())/len(self.results())
+
         
 class Player:
+    
+    all = []
+    
     def __init__(self, username):
         self._username = username
-        
+        Player.all.append(self)
+            
     @property
     def username(self):
         return self._username
 
     @username.setter
-    def set_username(self, value):
-        if (type(value, str)) and 2 <= len[value] <= 16:
-            self._username = value
+    def username(self, username):
+        if isinstance(username, str) and 2 <= len(username) <= 16:
+            self._username = username
         else:
             return ("Username must be string of 2 to 16 characters")
         
@@ -41,32 +51,42 @@ class Player:
         return [result for result in Result.all if result.player == self]
 
     def games_played(self):
-        return [result.game for result in self.results()]
+        return list({result.game for result in self.results()})
 
     def played_game(self, game):
-        pass
+        return (game in self.games_played())
 
     def num_times_played(self, game):
-        pass
-
+        games_list = [result.game for result in self.results()]
+        return games_list.count(game) 
+    
 class Result:
     
     all = []
 
     def __init__(self, player, game, score):
-        self.player = player
-        self.game = game
-        self.score = score
-        self.__class__.all.amend(self)
+        self._player = player
+        self._game = game
+        self._score = score
+        Result.all.append(self)
         
     @property
     def score(self):
         return self._score
     
     @score.setter
-    def set_score(self, value):
-        if (type(value, int)) and 1 <= value <= 5000 and not hasattr(self, 'score'):
-            self._score = value
+    def score(self, score):
+        if isinstance(score, int) and 1 <= score <= 5000 and not hasattr(self, "score"):
+            self._score = score
         else:
             return ("oh no you don't")
-            
+
+    @property
+    def player(self):
+        return self._player
+    
+    @property
+    def game(self):
+        return self._game
+
+    #def __repr__(self):
